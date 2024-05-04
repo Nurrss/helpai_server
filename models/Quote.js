@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const PostsSchema = new Schema(
+const QuotesSchema = new Schema(
   {
     title: {
       type: String,
@@ -19,4 +19,4 @@ const PostsSchema = new Schema(
   { timestamps: true, get: (time) => time.toDateString() }
 );
 
-module.exports = mongoose.model("Posts", PostsSchema);
+module.exports = mongoose.model("Quotes", QuotesSchema);

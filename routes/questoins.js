@@ -1,12 +1,12 @@
 const router = require("express").Router();
 const _ = require("lodash");
 
-const Posts = require("../models/Posts");
+const Question = require("../models/Questions");
 
 router.get("/", async (req, res) => {
   try {
-    const posts = await Posts.find();
-    res.status(200).json(posts);
+    const questions = await Question.find();
+    res.status(200).json(questions);
   } catch (error) {
     console.log(error);
   }

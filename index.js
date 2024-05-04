@@ -10,10 +10,12 @@ const cookieParser = require("cookie-parser");
 const authRoute = require("./routes/auth");
 const adminRoute = require("./routes/admin");
 const userRoute = require("./routes/users");
-const PostsRoute = require("./routes/posts");
+const QuestionsRoute = require("./routes/questoins");
 const publicRoute = require("./routes/public");
 const registerRoute = require("./routes/register");
 const { logger, logEvents } = require("./middleware/logger");
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 
 const port = 3000;
 
@@ -43,10 +45,13 @@ app.use(helmet());
 app.use(morgan("common"));
 app.use(cors());
 app.use(cookieParser());
+const specs = swaggerJsdoc(options);
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use("/api/register", registerRoute);
 app.use("/api/auth", authRoute);
-app.use("/api/posts", PostsRoute);
+app.use("/api/questions", QuestionsRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/public", publicRoute);
 app.use("/api/user", userRoute);

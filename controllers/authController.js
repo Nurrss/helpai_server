@@ -2,6 +2,8 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 const Users = require("../models/Users");
+const Teachers = require("../models/Teachers"); // Import the Teachers model
+const Admins = require("../models/Admins");
 
 const handleLogin = async (req, res) => {
   const { email, password } = req.body;
@@ -13,7 +15,6 @@ const handleLogin = async (req, res) => {
 
   const foundUser = await Users.findOne({ email: email }).exec();
 
-  //Unauthorized
   if (!foundUser) {
     return res.status(404).json({
       message: "User email is not found. Invalid login credentials.",
@@ -43,10 +44,25 @@ const handleLogin = async (req, res) => {
 
     foundUser.refreshToken = refreshToken;
     await foundUser.save();
-    res.status(200).send({
+
+    let roleData = {};
+
+    if (role === "teacher") {
+      const teacher = await Teachers.findOne({ user: _id }).exec();
+      roleData.teacherId = teacher ? teacher._id : null;
+    }
+    if (role === "admin") {
+      const admin = await Admins.findOne({ user: _id }).exec();
+      roleData.adminId = admin ? admin._id : null;
+    }
+
+    res.status(200).json({
       accessToken,
       refreshToken,
       success: true,
+      userId: _id,
+      role,
+      ...roleData,
     });
   } else {
     res.status(403).json({

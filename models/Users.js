@@ -35,14 +35,13 @@ const UsersSchema = new Schema(
     refreshToken: String,
     role: {
       type: String,
-      enum: ["admin"],
+      enum: ["admin", "teacher"],
       required: true,
     },
   },
   { timestamps: true, get: (time) => time.toDateString() }
 );
 
-// Метод для проверки refresh токена
 UsersSchema.methods.isValidRefreshToken = function (providedRefreshToken) {
   return this.refreshToken === providedRefreshToken;
 };

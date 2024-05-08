@@ -9,6 +9,7 @@ const cookieParser = require("cookie-parser");
 
 const authRoute = require("./routes/auth");
 const adminRoute = require("./routes/admin");
+const teacherRoute = require("./routes/teacher");
 const userRoute = require("./routes/users");
 const QuestionsRoute = require("./routes/questoins");
 const publicRoute = require("./routes/public");
@@ -53,6 +54,7 @@ app.use("/api/register", registerRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/questions", QuestionsRoute);
 app.use("/api/admin", adminRoute);
+app.use("/api/teacher", teacherRoute);
 app.use("/api/public", publicRoute);
 app.use("/api/user", userRoute);
 

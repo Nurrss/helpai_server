@@ -1,10 +1,10 @@
+require("dotenv").config();
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 
 const { hashConstance, ROLES } = require("../enums");
 const Users = require("../models/Users");
 const Teachers = require("../models/Teachers");
-require("dotenv").config();
 
 const handleNewUser = async (req, res) => {
   const { telegram_id, password, role, name } = req.body;
@@ -37,7 +37,7 @@ const handleNewUser = async (req, res) => {
     const newUser = new Users({
       telegram_id,
       password: hashedPwd,
-      role,
+      role: "user",
       name,
     });
     const user = await newUser.save();

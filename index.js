@@ -47,13 +47,7 @@ app.use(logger);
 app.use(express.json());
 app.use(helmet());
 app.use(morgan("common"));
-app.use(
-  cors({
-    origin: "*", // or your frontend URL
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+app.use(cors);
 
 app.use(cookieParser());
 const specs = swaggerJsdoc(options);

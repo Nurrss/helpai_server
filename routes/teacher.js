@@ -1,63 +1,50 @@
 const router = require("express").Router();
 const _ = require("lodash");
 
-const Questions = require("../models/Questions");
-const Quotes = require("../models/Quote");
-const Blogs = require("../models/Blogs");
-
 const errorHandler = require("../middleware/errorHandler");
 const Teachers = require("../models/Teachers");
+const Courses = require("../models/Courses");
 
 /**
  * @swagger
- * /teacher/blogs:
+ * /api/teachers:
  *   get:
- *     tags: [Teacher]
- *     summary: "Get all blogs associated with a specific teacher"
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               teacherId:
- *                 type: string
- *                 description: "The ID of the teacher whose blogs are to be retrieved"
+ *     tags: [Teachers]
+ *     summary: "Get all teachers"
  *     responses:
  *       200:
- *         description: "A list of blogs managed by the specified teacher"
+ *         description: "A list of teachers retrieved successfully"
  *         content:
  *           application/json:
  *             schema:
- *               type: "array"
+ *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Blog'
+ *                 $ref: '#/components/schemas/Teacher'
  *
  * @swagger
- * /teacher/blog/add:
+ * /api/teacher/add:
  *   post:
- *     tags: [Teacher]
- *     summary: "Add a new blog for a teacher"
+ *     tags: [Teachers]
+ *     summary: "Add a new teacher"
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Blog'
+ *             $ref: '#/components/schemas/Teacher'
  *     responses:
  *       200:
- *         description: "New blog created successfully"
+ *         description: "New teacher added successfully"
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Blog'
+ *               $ref: '#/components/schemas/Teacher'
  *
  * @swagger
- * /teacher/blogs/{id}:
+ * /api/teachers/{id}:
  *   get:
- *     tags: [Teacher]
- *     summary: "Retrieve a specific blog by ID"
+ *     tags: [Teachers]
+ *     summary: "Get a single teacher by ID"
  *     parameters:
  *       - in: path
  *         name: id
@@ -66,14 +53,15 @@ const Teachers = require("../models/Teachers");
  *           type: string
  *     responses:
  *       200:
- *         description: "Specific blog data"
+ *         description: "Teacher retrieved successfully"
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Blog'
+ *               $ref: '#/components/schemas/Teacher'
+ *
  *   put:
- *     tags: [Teacher]
- *     summary: "Update a blog by ID"
+ *     tags: [Teachers]
+ *     summary: "Update a teacher by ID"
  *     parameters:
  *       - in: path
  *         name: id
@@ -85,24 +73,18 @@ const Teachers = require("../models/Teachers");
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               description:
- *                 type: string
- *               imageUrl:
- *                 type: string
+ *             $ref: '#/components/schemas/Teacher'
  *     responses:
  *       200:
- *         description: "Blog updated successfully"
+ *         description: "Teacher updated successfully"
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Blog'
+ *               $ref: '#/components/schemas/Teacher'
+ *
  *   delete:
- *     tags: [Teacher]
- *     summary: "Delete a blog by ID"
+ *     tags: [Teachers]
+ *     summary: "Delete a teacher by ID"
  *     parameters:
  *       - in: path
  *         name: id
@@ -111,101 +93,92 @@ const Teachers = require("../models/Teachers");
  *           type: string
  *     responses:
  *       200:
- *         description: "Blog deleted successfully"
+ *         description: "Teacher deleted successfully"
+ *
  * components:
  *   schemas:
- *     Blog:
+ *     Teacher:
  *       type: object
  *       required:
- *         - title
- *         - description
- *         - imageUrl
+ *         - name
+ *         - user
  *       properties:
- *         title:
+ *         name:
  *           type: string
- *         description:
- *           type: string
- *         imageUrl:
- *           type: string
+ *           example: "John Doe"
  *         user:
  *           type: string
- *           description: "The ID of the user who owns the blog"
- *         teacher:
- *           type: string
- *           description: "The ID of the teacher associated with the blog"
+ *           description: "ObjectId of associated user"
+ *           example: "665aefdbc49b9d1f08b173e1"
+ *         courses:
+ *           type: array
+ *           items:
+ *             type: string
+ *             description: "Course ObjectId"
+ *           example: ["665aefdbc49b9d1f08b173e5"]
  */
 
-// Blogs Route
-
-router.route("/blogs").get(async (req, res) => {
+router.route("/courses").get(async (req, res) => {
   try {
-    const { teacherId } = req.body;
-    const blogs = await Blogs.find({ teacher: teacherId });
-    res.status(200).json(blogs);
+    const courses = await Courses.find();
+    res.status(200).json(courses);
   } catch (err) {
     errorHandler(err, req, res);
   }
 });
 
-router.post("/blog/add", async (req, res) => {
+router.post("/course/add", async (req, res) => {
   try {
-    const { title, description, imageUrl, userId, teacherId } = req.body;
-    const newBlog = new Blogs({
+    const { title, description } = req.body;
+    const newCourses = new Courses({
       title,
       description,
-      imageUrl,
-      user: userId,
-      teacher: teacherId,
     });
-    await newBlog.save();
-
-    const teacher = await Teachers.findById(teacherId);
-    teacher.blogs.push(newBlog._id);
-    await teacher.save();
-    res.status(200).json(newBlog);
+    await newCourses.save();
+    res.status(200).json(newCourses);
   } catch (error) {
     console.log(error);
   }
 });
 
-router.get("/blogs/:id", async (req, res) => {
+router.get("/courses/:id", async (req, res) => {
   try {
-    const blodId = _.get(req, "params.id");
-    if (!blodId) {
+    const courseId = _.get(req, "params.id");
+    if (!quoteId) {
       res.status(400).json({ message: "Id not found", success: false });
     } else {
-      const blog = await Blogs.findById(blodId);
-      res.status(200).json(blog);
+      const course = await Courses.findById(courseId);
+      res.status(200).json(course);
     }
   } catch (error) {
     console.log(error);
   }
 });
 
-router.put("/blogs/:id", async (req, res) => {
+router.put("/course/:id", async (req, res) => {
   try {
-    const blodId = _.get(req, "params.id");
-    const { title, description, imageUrl } = req.body;
-    const updatedBlog = await Blogs.findByIdAndUpdate(blodId, {
+    const courseId = _.get(req, "params.id");
+    const { title, description, show } = req.body;
+    const updatedCourse = await Courses.findByIdAndUpdate(courseId, {
       title,
       description,
-      imageUrl,
+      show,
     });
-    const updated = await updatedBlog.save();
+    const updated = await updatedCourse.save();
     res.status(200).json(updated);
   } catch (err) {
     console.log(err);
   }
 });
 
-router.delete("/blogs/:id", async (req, res) => {
+router.delete("/courses/:id", async (req, res) => {
   try {
-    const blodId = _.get(req, "params.id");
-    if (!blodId) {
+    const courseId = _.get(req, "params.id");
+    if (!courseId) {
       return res.status(400).json({ message: ` ID required.` });
     } else {
-      await Blogs.findByIdAndDelete(blodId).then(
-        res.status(200).json(`${blodId} : was deleted`)
+      await Courses.findByIdAndDelete(courseId).then(
+        res.status(200).json(`${courseId} : was deleted`)
       );
     }
   } catch (err) {

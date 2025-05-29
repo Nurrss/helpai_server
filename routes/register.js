@@ -4,36 +4,16 @@ const handleNewUser = require("../controllers/registerController");
 
 /**
  * @swagger
- * /register:
+ * /api/register:
  *   post:
- *     tags: [Authentication]
- *     summary: "Register a new user"
+ *     tags: [Auth]
+ *     summary: "Register a new user or teacher"
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *                 description: "User email address"
- *                 required: true
- *               password:
- *                 type: string
- *                 description: "User password"
- *                 required: true
- *               role:
- *                 type: string
- *                 description: "User role"
- *                 required: false
- *                 default: "user"
- *           examples:
- *             newUser:
- *               value:
- *                 email: "test@example.com"
- *                 password: "yourSecurePassword"
- *                 role: "user"
+ *             $ref: '#/components/schemas/RegisterInput'
  *     responses:
  *       200:
  *         description: "User registered successfully"
@@ -42,22 +22,11 @@ const handleNewUser = require("../controllers/registerController");
  *             schema:
  *               type: object
  *               properties:
- *                 email:
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
+ *                 message:
  *                   type: string
- *                 role:
- *                   type: string
- *                 _id:
- *                   type: string
- *                 createdAt:
- *                   type: string
- *                 updatedAt:
- *                   type: string
- *             example:
- *               email: "test@example.com"
- *               role: "user"
- *               _id: "507f1f77bcf86cd799439011"
- *               createdAt: "2020-01-01T00:00:00.000Z"
- *               updatedAt: "2020-01-01T00:00:00.000Z"
+ *                   example: "User created successfully with role: teacher"
  *       400:
  *         description: "Bad request, validation failed"
  *         content:
@@ -67,11 +36,10 @@ const handleNewUser = require("../controllers/registerController");
  *               properties:
  *                 message:
  *                   type: string
+ *                   example: "Telegram ID is required."
  *                 success:
  *                   type: boolean
- *             example:
- *               message: "Email is required."
- *               success: false
+ *                   example: false
  *       500:
  *         description: "Internal server error"
  *         content:
@@ -81,8 +49,53 @@ const handleNewUser = require("../controllers/registerController");
  *               properties:
  *                 message:
  *                   type: string
- *             example:
- *               message: "Error description"
+ *                   example: "Something went wrong."
+ *
+ * components:
+ *   schemas:
+ *     RegisterInput:
+ *       type: object
+ *       required:
+ *         - telegram_id
+ *         - password
+ *         - role
+ *       properties:
+ *         telegram_id:
+ *           type: number
+ *           example: 123456789
+ *         password:
+ *           type: string
+ *           example: mySecretPassword
+ *         role:
+ *           type: string
+ *           enum: [user, teacher]
+ *           example: teacher
+ *         name:
+ *           type: string
+ *           example: "Jane Teacher"
+ *     User:
+ *       type: object
+ *       properties:
+ *         _id:
+ *           type: string
+ *           example: "665aefdbc49b9d1f08b173e1"
+ *         telegram_id:
+ *           type: number
+ *           example: 123456789
+ *         role:
+ *           type: string
+ *           enum: [user, teacher]
+ *         name:
+ *           type: string
+ *         course:
+ *           type: string
+ *           nullable: true
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
  */
 
 router.post("/", handleNewUser);

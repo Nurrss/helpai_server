@@ -5,31 +5,19 @@ const handleRefreshToken = require("../controllers/authRefreshTokenController");
 
 /**
  * @swagger
- * /auth:
+ * /api/auth:
  *   post:
- *     tags: [Authentication]
- *     summary: User login
+ *     tags: [Auth]
+ *     summary: "Login with Telegram ID and password"
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *                 description: User's email
- *               password:
- *                 type: string
- *                 description: User's password
- *           examples:
- *             example1:
- *               value:
- *                 email: "user@example.com"
- *                 password: "password123"
+ *             $ref: '#/components/schemas/LoginInput'
  *     responses:
  *       200:
- *         description: Login successful, returns access and refresh tokens
+ *         description: "Login successful"
  *         content:
  *           application/json:
  *             schema:
@@ -41,39 +29,41 @@ const handleRefreshToken = require("../controllers/authRefreshTokenController");
  *                 refreshToken:
  *                   type: string
  *                   description: JWT refresh token
+ *                 userId:
+ *                   type: string
+ *                 role:
+ *                   type: string
+ *                 teacherId:
+ *                   type: string
+ *                   nullable: true
  *                 success:
  *                   type: boolean
- *             example:
- *               accessToken: "generatedAccessToken"
- *               refreshToken: "generatedRefreshToken"
- *               success: true
+ *               example:
+ *                 accessToken: "generatedAccessToken"
+ *                 refreshToken: "generatedRefreshToken"
+ *                 userId: "665b2cfedcbaaf10c5c963f0"
+ *                 role: "teacher"
+ *                 teacherId: "665b2cfedcbaaf10c5c963f2"
+ *                 success: true
  *       403:
- *         description: Incorrect password
+ *         description: "Incorrect password"
  *       404:
- *         description: User not found
+ *         description: "User not found"
  *
  * @swagger
- * /auth/refreshToken:
+ * /api/auth/refreshToken:
  *   post:
- *     tags: [Authentication]
- *     summary: Refresh access token
+ *     tags: [Auth]
+ *     summary: "Refresh access token"
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               refreshToken:
- *                 type: string
- *                 description: Refresh token to be refreshed
- *           examples:
- *             example1:
- *               value:
- *                 refreshToken: "existingRefreshToken"
+ *             $ref: '#/components/schemas/RefreshTokenInput'
  *     responses:
  *       200:
- *         description: Refresh token validated and new tokens generated
+ *         description: "New tokens issued"
  *         content:
  *           application/json:
  *             schema:
@@ -81,22 +71,42 @@ const handleRefreshToken = require("../controllers/authRefreshTokenController");
  *               properties:
  *                 accessToken:
  *                   type: string
- *                   description: New JWT access token
  *                 refreshToken:
  *                   type: string
- *                   description: New JWT refresh token
  *                 success:
  *                   type: boolean
- *             example:
- *               accessToken: "newAccessToken"
- *               refreshToken: "newRefreshToken"
- *               success: true
+ *               example:
+ *                 accessToken: "newAccessToken"
+ *                 refreshToken: "newRefreshToken"
+ *                 success: true
  *       401:
- *         description: Invalid or expired refresh token
+ *         description: "Invalid or expired refresh token"
+ *
+ * components:
+ *   schemas:
+ *     LoginInput:
+ *       type: object
+ *       required:
+ *         - telegram_id
+ *         - password
+ *       properties:
+ *         telegram_id:
+ *           type: number
+ *           example: 123456789
+ *         password:
+ *           type: string
+ *           example: mySecret123
+ *     RefreshTokenInput:
+ *       type: object
+ *       required:
+ *         - refreshToken
+ *       properties:
+ *         refreshToken:
+ *           type: string
+ *           example: existingRefreshToken
  */
 
 router.post("/", handleLogin);
-
 router.post("/refreshToken", handleRefreshToken);
 
 module.exports = router;

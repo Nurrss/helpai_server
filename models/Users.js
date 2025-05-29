@@ -1,23 +1,16 @@
 const mongoose = require("mongoose");
-
 const { Schema } = mongoose;
 const validator = require("validator");
 
 const UsersSchema = new Schema(
   {
-    email: {
-      type: String,
+    telegram_id: {
+      type: Number,
       trim: true,
       required: true,
       unique: true,
-      lowercase: true,
-      validate: [
-        {
-          validator: (value) => validator.isEmail(value),
-          msg: "Invalid email",
-        },
-      ],
     },
+    name: String,
     password: {
       type: String,
       trim: true,
@@ -31,15 +24,17 @@ const UsersSchema = new Schema(
         },
       ],
     },
-
     refreshToken: String,
     role: {
       type: String,
-      enum: ["admin", "teacher"],
+      enum: ["user", "teacher"],
       required: true,
     },
+    course: { type: Schema.Types.ObjectId, ref: "Courses" },
+    tests: [{ type: Schema.Types.ObjectId, ref: "Tests" }],
+    professions: [{ type: Schema.Types.ObjectId, ref: "Professions" }],
   },
-  { timestamps: true, get: (time) => time.toDateString() }
+  { timestamps: true }
 );
 
 UsersSchema.methods.isValidRefreshToken = function (providedRefreshToken) {

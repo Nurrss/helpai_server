@@ -4,9 +4,7 @@ const _ = require("lodash");
 const Users = require("../models/Users");
 const ApiOptimizer = require("../api");
 
-const checkRole = require("../middleware/checkRole");
 const errorHandler = require("../middleware/errorHandler");
-const { ROLES } = require("../enums");
 
 const user = new ApiOptimizer(Users);
 const modelName = "User";

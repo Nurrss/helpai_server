@@ -3,16 +3,15 @@ const mongoose = require("mongoose");
 
 const { hashConstance, ROLES } = require("../enums");
 const Users = require("../models/Users");
-const Admins = require("../models/Admins");
 const Teachers = require("../models/Teachers");
 
 const handleNewUser = async (req, res) => {
-  const { email, password, role } = req.body;
+  const { telegram_id, password, role, name } = req.body;
 
-  if (!email)
+  if (!telegram_id)
     return res
       .status(400)
-      .json({ message: "Email is required.", success: false });
+      .json({ message: "Telegram ID is required.", success: false });
 
   if (!password)
     return res
@@ -25,32 +24,25 @@ const handleNewUser = async (req, res) => {
       .json({ message: "Invalid role specified.", success: false });
 
   try {
-    const validateEmail = async (email) => {
-      let user = await Users.findOne({ email });
-      return user ? false : true;
-    };
-
-    let emailNotRegistered = await validateEmail(email);
-    if (!emailNotRegistered) {
+    const existingUser = await Users.findOne({ telegram_id });
+    if (existingUser) {
       return res.status(400).json({
-        message: `Email is already registered.`,
+        message: `User is already registered.`,
         success: false,
       });
     }
 
     const hashedPwd = await bcrypt.hash(password, hashConstance);
     const newUser = new Users({
-      email,
+      telegram_id,
       password: hashedPwd,
       role,
+      name,
     });
     const user = await newUser.save();
 
-    if (role === "admin") {
-      const admin = new Admins({ user: user._id });
-      await admin.save();
-    } else if (role === "teacher") {
-      const teacher = new Teachers({ user: user._id });
+    if (role === "teacher") {
+      const teacher = new Teachers({ user: user._id, name: name });
       await teacher.save();
     }
 

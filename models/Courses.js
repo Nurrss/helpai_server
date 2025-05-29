@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const BlogsSchema = new Schema(
+const CoursesSchema = new Schema(
   {
     title: {
       type: String,
@@ -11,14 +11,14 @@ const BlogsSchema = new Schema(
       type: String,
       required: true,
     },
-    imageUrl: {
+    durability: {
       type: String,
       required: true,
     },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "Users" },
+    lessons: [{ type: mongoose.Schema.Types.ObjectId, ref: "Lessons" }],
     teacher: { type: mongoose.Schema.Types.ObjectId, ref: "Teachers" },
   },
-  { timestamps: true, get: (time) => time.toDateString() }
+  { timestamps: true }
 );
 
-module.exports = mongoose.model("Blogs", BlogsSchema);
+module.exports = mongoose.model("Courses", CoursesSchema);

@@ -55,7 +55,7 @@ app.use(
 
 app.use(cookieParser());
 const specs = swaggerJsdoc(options);
-
+//;lkaj;lkj
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use("/api/register", registerRoute);

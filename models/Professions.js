@@ -7,7 +7,7 @@ const ProfessionsSchema = new Schema(
       type: String,
       required: true,
     },
-    course: { type: Schema.Types.ObjectId, ref: "Courses" },
+    course: [{ type: Schema.Types.ObjectId, ref: "Courses" }],
   },
   { timestamps: true }
 );

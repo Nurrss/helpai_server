@@ -5,6 +5,9 @@ const OpenAI = require("openai");
 const Users = require("../models/Users");
 const Tests = require("../models/Tests");
 const Professions = require("../models/Professions");
+const {
+  generateCoursesByProfessionsLogic,
+} = require("../controllers/courseAiController");
 
 const openai = new OpenAI({ apiKey: process.env.API_KEY });
 
@@ -99,10 +102,16 @@ ${test_answers.join("\n")}
     await user.save();
 
     // 5. Ответить боту
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       result,
     });
+
+    const courseGenResult = await generateCoursesByProfessionsLogic(
+      professionNames,
+      lang
+    );
+    console.log("Курстар генерацияланды", courseGenResult);
   } catch (error) {
     console.error("AI error:", error);
     return res.status(500).json({ success: false, message: "AI error" });

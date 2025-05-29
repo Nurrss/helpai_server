@@ -47,11 +47,16 @@ app.use(logger);
 app.use(express.json());
 app.use(helmet());
 app.use(morgan("common"));
-app.use(cors);
+app.use(
+  cors({
+    origin: "*", // or your frontend URL
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 app.use(cookieParser());
 const specs = swaggerJsdoc(options);
-//;lkaj;lkj
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use("/api/register", registerRoute);
@@ -63,6 +68,9 @@ app.use("/api/teachers", teacherRoute);
 app.use("/api/professions", professionRoute);
 app.use("/api/tests", testRoute);
 app.use("/api/users", userRoute);
+app.get("/", (req, res) => {
+  res.send("Hello from HelpAI backend");
+});
 
 mongoose.connection.once("open", () => {
   console.log("Connected to MongoDB");

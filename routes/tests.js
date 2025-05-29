@@ -20,7 +20,7 @@ const Tests = require("../models/Tests");
  *                 $ref: '#/components/schemas/Test'
  *
  * @swagger
- * /api/test/add:
+ * /api/tests/add:
  *   post:
  *     tags: [Tests]
  *     summary: "Add a new test"
@@ -121,7 +121,7 @@ const Tests = require("../models/Tests");
  */
 
 // GET all tests
-router.get("/tests", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const tests = await Tests.find().populate("user");
     res.status(200).json(tests);
@@ -132,7 +132,7 @@ router.get("/tests", async (req, res) => {
 });
 
 // ADD test
-router.post("/test/add", async (req, res) => {
+router.post("/add", async (req, res) => {
   try {
     const { test_answers, user } = req.body;
     if (!Array.isArray(test_answers) || !user) {
@@ -154,7 +154,7 @@ router.post("/test/add", async (req, res) => {
 });
 
 // GET test by ID
-router.get("/tests/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const testId = _.get(req, "params.id");
     if (!testId) {
@@ -172,7 +172,7 @@ router.get("/tests/:id", async (req, res) => {
 });
 
 // UPDATE test
-router.put("/test/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const testId = _.get(req, "params.id");
     const { test_answers, user } = req.body;
@@ -189,7 +189,7 @@ router.put("/test/:id", async (req, res) => {
 });
 
 // DELETE test
-router.delete("/tests/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const testId = _.get(req, "params.id");
     if (!testId) {

@@ -20,7 +20,7 @@ const Courses = require("../models/Courses");
  *                 $ref: '#/components/schemas/Course'
  *
  * @swagger
- * /api/course/add:
+ * /api/courses/add:
  *   post:
  *     tags: [Courses]
  *     summary: "Add a new course"
@@ -124,7 +124,7 @@ const Courses = require("../models/Courses");
  */
 
 // GET all courses
-router.get("/courses", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const courses = await Courses.find();
     res.status(200).json(courses);
@@ -135,7 +135,7 @@ router.get("/courses", async (req, res) => {
 });
 
 // ADD course
-router.post("/course/add", async (req, res) => {
+router.post("/add", async (req, res) => {
   try {
     const { title, description, durability, teacher } = req.body;
     const newCourse = new Courses({
@@ -153,7 +153,7 @@ router.post("/course/add", async (req, res) => {
 });
 
 // GET course by ID
-router.get("/courses/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const courseId = _.get(req, "params.id");
     if (!courseId) {
@@ -171,7 +171,7 @@ router.get("/courses/:id", async (req, res) => {
 });
 
 // UPDATE course
-router.put("/course/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const courseId = _.get(req, "params.id");
     const { title, description, durability } = req.body;
@@ -188,7 +188,7 @@ router.put("/course/:id", async (req, res) => {
 });
 
 // DELETE course
-router.delete("/courses/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const courseId = _.get(req, "params.id");
     if (!courseId) {

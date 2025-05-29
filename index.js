@@ -10,6 +10,7 @@ const cookieParser = require("cookie-parser");
 
 const authRoute = require("./routes/auth");
 const teacherRoute = require("./routes/teacher");
+const aiRoute = require("./routes/ai");
 const userRoute = require("./routes/users");
 const courseRoute = require("./routes/course");
 const lessonRoute = require("./routes/lesson");
@@ -61,12 +62,13 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use("/api/register", registerRoute);
 app.use("/api/auth", authRoute);
-app.use("/api/course", courseRoute);
-app.use("/api/lesson", lessonRoute);
-app.use("/api/teacher", teacherRoute);
-app.use("/api/pro", professionRoute);
-app.use("/api/test", testRoute);
-app.use("/api/user", userRoute);
+app.use("/api/ai", aiRoute);
+app.use("/api/courses", courseRoute);
+app.use("/api/lessons", lessonRoute);
+app.use("/api/teachers", teacherRoute);
+app.use("/api/professions", professionRoute);
+app.use("/api/tests", testRoute);
+app.use("/api/users", userRoute);
 
 mongoose.connection.once("open", () => {
   console.log("Connected to MongoDB");

@@ -20,7 +20,7 @@ const Professions = require("../models/Professions");
  *                 $ref: '#/components/schemas/Profession'
  *
  * @swagger
- * /api/profession/add:
+ * /api/professions/add:
  *   post:
  *     tags: [Professions]
  *     summary: "Add a new profession"
@@ -111,7 +111,7 @@ const Professions = require("../models/Professions");
  */
 
 // GET all professions
-router.get("/professions", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const professions = await Professions.find().populate("course");
     res.status(200).json(professions);
@@ -122,7 +122,7 @@ router.get("/professions", async (req, res) => {
 });
 
 // ADD profession
-router.post("/profession/add", async (req, res) => {
+router.post("/add", async (req, res) => {
   try {
     const { name, course } = req.body;
     const newProfession = new Professions({
@@ -138,7 +138,7 @@ router.post("/profession/add", async (req, res) => {
 });
 
 // GET profession by ID
-router.get("/professions/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const professionId = _.get(req, "params.id");
     if (!professionId) {
@@ -158,7 +158,7 @@ router.get("/professions/:id", async (req, res) => {
 });
 
 // UPDATE profession
-router.put("/profession/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const professionId = _.get(req, "params.id");
     const { name, course } = req.body;
@@ -175,7 +175,7 @@ router.put("/profession/:id", async (req, res) => {
 });
 
 // DELETE profession
-router.delete("/professions/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const professionId = _.get(req, "params.id");
     if (!professionId) {

@@ -4,6 +4,7 @@ const { Schema } = mongoose;
 const TestsSchema = new Schema(
   {
     test_answers: [{ type: String, required: true }],
+    result: String,
     user: { type: Schema.Types.ObjectId, ref: "Users" },
   },
   { timestamps: true, get: (time) => time.toDateString() }

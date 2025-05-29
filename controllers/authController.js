@@ -1,8 +1,9 @@
+require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 const Users = require("../models/Users");
-const Teachers = require("../models/Teachers"); // Import the Teachers model
+const Teachers = require("../models/Teachers");
 
 const handleLogin = async (req, res) => {
   const { name, password } = req.body;
@@ -24,10 +25,15 @@ const handleLogin = async (req, res) => {
   const isMatch = await bcrypt.compare(password, foundUser.password);
   if (isMatch) {
     const { name, role, _id } = foundUser;
-    accessToken = jwt.sign({
-      UserInfo: { _id, name, role },
-    });
-    refreshToken = jwt.sign({ name }, process.env.REFRESH_TOKEN_SECRET, {
+    const accessToken = jwt.sign(
+      {
+        UserInfo: { _id, name, role },
+      },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "999m" }
+    );
+
+    const refreshToken = jwt.sign({ name }, process.env.REFRESH_TOKEN_SECRET, {
       expiresIn: "365d",
     });
 
@@ -43,12 +49,7 @@ const handleLogin = async (req, res) => {
     roleData.userId = foundUser._id;
 
     res.status(200).json({
-      accessToken,
-      refreshToken,
-      success: true,
-      userId: _id,
-      role,
-      ...roleData,
+      foundUser,
     });
   } else {
     res.status(403).json({

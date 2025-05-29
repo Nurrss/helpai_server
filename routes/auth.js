@@ -8,7 +8,7 @@ const handleRefreshToken = require("../controllers/authRefreshTokenController");
  * /api/auth:
  *   post:
  *     tags: [Auth]
- *     summary: "Login with Telegram ID and password"
+ *     summary: "Login with name and password"
  *     requestBody:
  *       required: true
  *       content:
@@ -23,87 +23,81 @@ const handleRefreshToken = require("../controllers/authRefreshTokenController");
  *             schema:
  *               type: object
  *               properties:
- *                 accessToken:
- *                   type: string
- *                   description: JWT access token
- *                 refreshToken:
- *                   type: string
- *                   description: JWT refresh token
- *                 userId:
- *                   type: string
- *                 role:
- *                   type: string
- *                 teacherId:
- *                   type: string
- *                   nullable: true
- *                 success:
- *                   type: boolean
- *               example:
- *                 accessToken: "generatedAccessToken"
- *                 refreshToken: "generatedRefreshToken"
- *                 userId: "665b2cfedcbaaf10c5c963f0"
- *                 role: "teacher"
- *                 teacherId: "665b2cfedcbaaf10c5c963f2"
- *                 success: true
+ *                 foundUser:
+ *                   $ref: '#/components/schemas/User'
  *       403:
  *         description: "Incorrect password"
- *       404:
- *         description: "User not found"
- *
- * @swagger
- * /api/auth/refreshToken:
- *   post:
- *     tags: [Auth]
- *     summary: "Refresh access token"
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/RefreshTokenInput'
- *     responses:
- *       200:
- *         description: "New tokens issued"
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 accessToken:
+ *                 message:
  *                   type: string
- *                 refreshToken:
- *                   type: string
+ *                   example: "Incorrect password."
  *                 success:
  *                   type: boolean
- *               example:
- *                 accessToken: "newAccessToken"
- *                 refreshToken: "newRefreshToken"
- *                 success: true
- *       401:
- *         description: "Invalid or expired refresh token"
+ *                   example: false
+ *       404:
+ *         description: "User not found"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User is not found. Invalid login credentials."
+ *                 success:
+ *                   type: boolean
+ *                   example: false
  *
  * components:
  *   schemas:
  *     LoginInput:
  *       type: object
  *       required:
- *         - telegram_id
+ *         - name
  *         - password
  *       properties:
- *         telegram_id:
- *           type: number
- *           example: 123456789
+ *         name:
+ *           type: string
+ *           example: johndoe
  *         password:
  *           type: string
  *           example: mySecret123
- *     RefreshTokenInput:
+ *     User:
  *       type: object
- *       required:
- *         - refreshToken
  *       properties:
- *         refreshToken:
+ *         _id:
  *           type: string
- *           example: existingRefreshToken
+ *           example: "665b2cfedcbaaf10c5c963f0"
+ *         name:
+ *           type: string
+ *           example: johndoe
+ *         role:
+ *           type: string
+ *           enum: [user, teacher]
+ *         telegram_id:
+ *           type: number
+ *           example: 123456789
+ *         course:
+ *           type: string
+ *           nullable: true
+ *         professions:
+ *           type: array
+ *           items:
+ *             type: string
+ *         tests:
+ *           type: array
+ *           items:
+ *             type: string
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
  */
 
 router.post("/", handleLogin);

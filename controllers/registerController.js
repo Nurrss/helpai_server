@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const { hashConstance, ROLES } = require("../enums");
 const Users = require("../models/Users");
 const Teachers = require("../models/Teachers");
+require("dotenv").config();
 
 const handleNewUser = async (req, res) => {
   const { telegram_id, password, role, name } = req.body;

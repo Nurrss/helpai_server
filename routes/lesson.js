@@ -122,7 +122,33 @@ const Lessons = require("../models/Lessons");
 router.get("/", async (req, res) => {
   try {
     const lessons = await Lessons.find().populate("course");
-    res.status(200).json(lessons);
+
+    // Получаем все уроки по courseId
+    const courseLessonsMap = {};
+
+    // Собираем ссылки по каждому курсу
+    lessons.forEach((lesson) => {
+      const courseId = lesson.course._id.toString();
+      if (!courseLessonsMap[courseId]) {
+        courseLessonsMap[courseId] = [];
+      }
+      courseLessonsMap[courseId].push(lesson.link);
+    });
+
+    // Заменяем course.lessons на ссылки
+    const modifiedLessons = lessons.map((lesson) => {
+      const modifiedCourse = {
+        ...lesson.course.toObject(),
+        lessons: courseLessonsMap[lesson.course._id.toString()],
+      };
+
+      return {
+        ...lesson.toObject(),
+        course: modifiedCourse,
+      };
+    });
+
+    res.status(200).json(modifiedLessons);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });

@@ -19,7 +19,6 @@ const Professions = require("../models/Professions");
  *               items:
  *                 $ref: '#/components/schemas/Profession'
  *
- * @swagger
  * /api/professions/add:
  *   post:
  *     tags: [Professions]
@@ -38,7 +37,6 @@ const Professions = require("../models/Professions");
  *             schema:
  *               $ref: '#/components/schemas/Profession'
  *
- * @swagger
  * /api/professions/{id}:
  *   get:
  *     tags: [Professions]
@@ -99,15 +97,22 @@ const Professions = require("../models/Professions");
  *       type: object
  *       required:
  *         - name
- *         - course
  *       properties:
  *         name:
  *           type: string
  *           example: "UX Designer"
  *         course:
- *           type: string
- *           description: "ObjectId of the related course"
- *           example: "665c4f2ba5215b2e44b817a9"
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: "Array of ObjectIds referencing Courses"
+ *           example: ["665c4f2ba5215b2e44b817a9"]
+ *         roadmap:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: "Steps to follow for this profession"
+ *           example: ["1. Кітап оқу", "2. Курс өту", "3. Жобамен жұмыс істеу"]
  */
 
 // GET all professions

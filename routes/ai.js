@@ -37,11 +37,13 @@ router.post("/test", async (req, res) => {
 1. Қысқаша қорытынды (оқушы туралы сипаттама)
 2. Ұсынылатын мамандықтар (JSON форматта сақталатын болуы керек)
 3. Тілді анықта
+4. Roadmap құрастырып бер 15 қадаманан құрастырылған болсын
 
 Мысал формат:
 {
   "summary": "Оқушы – адамдармен тез тіл табысатын, эмпатиясы жоғары тұлға. Ол кеңес беру, мотивация беру салаларында өз қабілетін көрсете алады.",
   "professions": ["Психолог", "Коуч", "Профориентолог"],
+  "roadmap": ["1. Кітап оқу", "2. Курс оқу"]
   "lang":"kz"
 }
 
@@ -70,6 +72,7 @@ ${test_answers.join("\n")}
 
     const professionNames = parsed.professions;
     const summary = parsed.summary;
+    const roadmap = parsed.roadmap;
 
     let result = "";
 
@@ -85,9 +88,22 @@ ${test_answers.join("\n")}
 
     // 4. Сохранить профессии в базу и привязать к пользователю
     const professions = await Promise.all(
-      professionNames.map(async (name) => {
+      professionNames.map(async (name, index) => {
         let prof = await Professions.findOne({ name });
-        if (!prof) prof = await new Professions({ name }).save();
+
+        // Attach roadmap only if new
+        if (!prof) {
+          const roadmapItem = Array.isArray(roadmap) ? roadmap : [];
+          prof = await new Professions({ name, roadmap: roadmapItem }).save();
+        } else {
+          // If already exists, update roadmap if it's not already set
+          if (!prof.roadmap || prof.roadmap.length === 0) {
+            const roadmapItem = Array.isArray(roadmap) ? roadmap : [];
+            prof.roadmap = roadmapItem;
+            await prof.save();
+          }
+        }
+
         return prof._id;
       })
     );
@@ -102,6 +118,8 @@ ${test_answers.join("\n")}
     await user.save();
 
     // 5. Ответить боту
+    console.log("📌 Roadmap from AI:", roadmap);
+
     res.status(200).json({
       success: true,
       result,

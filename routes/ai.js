@@ -77,11 +77,11 @@ ${test_answers.join("\n")}
     let result = "";
 
     if (lang === "ru") {
-      result = `${summary} Вам подходят профессии:\n${professionNames.join(
+      result = `${summary} Вам подходят профессии: ${professionNames.join(
         ", "
       )}`;
     } else {
-      result = `${summary} Сізге сәйкес мамандықтар:\n${professionNames.join(
+      result = `${summary} Сізге сәйкес мамандықтар: ${professionNames.join(
         ", "
       )}`;
     }
